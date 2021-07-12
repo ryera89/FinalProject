@@ -22,4 +22,16 @@ class FINALPROJECT_API IInteractable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	void Interacted(AActor* OtherActor);
+
+	/** Interaction hint to show on UI*/
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	FString IntractionHint();
+	/** Name of the object to be interacted with, show on UI*/
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	FString InteractableObjectName();
+
 };
