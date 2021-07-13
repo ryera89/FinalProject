@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "Interactable.generated.h"
 
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UInteractable : public UInterface
@@ -23,15 +24,17 @@ class FINALPROJECT_API IInteractable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	
+	/** Active the event to happen when the actor who implement this interface is interacted by other actor
+	* @param OtherActor - Actor who interact
+	*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	void Interacted(AActor* OtherActor);
-
+	
 	/** Interaction hint to show on UI*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-	FString IntractionHint();
+	FString IntractionHint() const;
+
 	/** Name of the object to be interacted with, show on UI*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-	FString InteractableObjectName();
-
+	FString InteractableObjectName() const;
 };

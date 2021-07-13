@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Interfaces/Interactable.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AFinalProjectCharacter
@@ -56,6 +57,7 @@ void AFinalProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AFinalProjectCharacter::Interact);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AFinalProjectCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AFinalProjectCharacter::MoveRight);
@@ -74,6 +76,35 @@ void AFinalProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AFinalProjectCharacter::OnResetVR);
+}
+
+void AFinalProjectCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Overlap begins"));
+
+	//remains nullptr if OtherActor doesn't implement the IInteractable interface
+	InteractableActor = Cast<IInteractable>(OtherActor);
+	if (InteractableActor != nullptr)
+	{
+		//show interaction hint in ui
+	}
+
+}
+
+void AFinalProjectCharacter::NotifyActorEndOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorEndOverlap(OtherActor);
+	
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Overlap ends"));
+
+	if ((InteractableActor != nullptr) && (InteractableActor == Cast<IInteractable>(OtherActor)))
+	{
+		//make interaction hint from ui invisible
+
+		InteractableActor = nullptr;
+	}
 }
 
 
@@ -96,6 +127,11 @@ void AFinalProjectCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector
 void AFinalProjectCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
 		StopJumping();
+}
+
+void AFinalProjectCharacter::Interact()
+{
+	if (InteractableActor != nullptr) InteractableActor->Interacted_Implementation(this);
 }
 
 void AFinalProjectCharacter::TurnAtRate(float Rate)

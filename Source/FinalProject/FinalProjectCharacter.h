@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "FinalProjectCharacter.generated.h"
 
+class IInteractable;
+
 UCLASS(config=Game)
 class AFinalProjectCharacter : public ACharacter
 {
@@ -58,6 +60,8 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
+	/** Handle for interaction with other actors (ie pickups, open doors etc)*/
+	void Interact();
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -68,5 +72,14 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+	virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
+
+private:
+	//hold a pointer to the Actor wich the character wants to interact with
+	//if there isn't an Actor to interact with is equal to nullptr
+	IInteractable* InteractableActor = nullptr;
 };
 
