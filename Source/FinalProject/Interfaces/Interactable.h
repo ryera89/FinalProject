@@ -32,7 +32,7 @@ public:
 	
 	/** Interaction hint to show on UI*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-	FString IntractionHint() const;
+	FString InteractionHint() const;
 
 	/** Name of the object to be interacted with, show on UI*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")

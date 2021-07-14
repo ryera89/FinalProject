@@ -7,6 +7,13 @@
 #include "../Interfaces/Pickable.h"
 #include "ConsumablePickupItem.generated.h"
 
+UENUM()
+enum class EConsumableItemType : uint8
+{
+	HealthPotion,
+	EnergyPotion,
+};
+
 UCLASS()
 class FINALPROJECT_API AConsumablePickupItem : public AActor, public IPickable
 {
@@ -19,8 +26,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "RootComponent")
 	USceneComponent* Root;
 
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mesh")
-	//UStaticMeshComponent* Mesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mesh")
+	UStaticMeshComponent* Mesh;
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,15 +39,22 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
 	FString ItemName;
 
+	/** Property that hold the type of the consumable*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "ConsumableType")
+	EConsumableItemType ConsumableType;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void Interacted_Implementation(AActor* OtherActor) override;
 
-	FORCEINLINE FString IntractionHint_Implementation() const override { return InteractionHint; }
+	FORCEINLINE FString InteractionHint_Implementation() const override { return InteractionHint; }
 
 	FORCEINLINE FString InteractableObjectName_Implementation() const  override { return ItemName; }
 
-	FORCEINLINE EPickableItemType ItemType_Implementation() override { return EPickableItemType::Consumable; }
+	FORCEINLINE EPickableItemType ItemType_Implementation() const override { return EPickableItemType::Consumable; }
+
+	UFUNCTION(BlueprintCallable, category = "ConsumableType")
+	FORCEINLINE EConsumableItemType GetConsumableType() const { return ConsumableType; }
 };

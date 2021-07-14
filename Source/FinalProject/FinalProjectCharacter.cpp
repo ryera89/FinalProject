@@ -88,7 +88,9 @@ void AFinalProjectCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 	InteractableActor = Cast<IInteractable>(OtherActor);
 	if (InteractableActor != nullptr)
 	{
-		//show interaction hint in ui
+		//Show Interaction Hint on UI
+		InteractionHint.ExecuteIfBound(InteractableActor->InteractionHint_Implementation() + " "
+			+ InteractableActor->InteractableObjectName_Implementation(), true);
 	}
 
 }
@@ -101,8 +103,8 @@ void AFinalProjectCharacter::NotifyActorEndOverlap(AActor* OtherActor)
 
 	if ((InteractableActor != nullptr) && (InteractableActor == Cast<IInteractable>(OtherActor)))
 	{
-		//make interaction hint from ui invisible
-
+		//Hide interaction hint on UI
+		InteractionHint.ExecuteIfBound("", false);
 		InteractableActor = nullptr;
 	}
 }
@@ -132,6 +134,7 @@ void AFinalProjectCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector
 void AFinalProjectCharacter::Interact()
 {
 	if (InteractableActor != nullptr) InteractableActor->Interacted_Implementation(this);
+		//IInteractable::Execute_Interacted(InteractableActor, this);
 }
 
 void AFinalProjectCharacter::TurnAtRate(float Rate)

@@ -47,6 +47,6 @@ public:
 
 	/** Item type/category  (ie consumable, key, weapon etc...) */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Pickup")
-	EPickableItemType ItemType();
+	EPickableItemType ItemType() const;
 
 };

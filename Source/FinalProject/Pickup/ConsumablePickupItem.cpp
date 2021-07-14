@@ -12,8 +12,8 @@ AConsumablePickupItem::AConsumablePickupItem()
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	RootComponent = Root;
 
-	//Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
-	//Mesh->SetupAttachment(Root);
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
+	Mesh->SetupAttachment(Root);
 }
 
 // Called when the game starts or when spawned

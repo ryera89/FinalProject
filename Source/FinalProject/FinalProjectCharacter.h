@@ -8,6 +8,9 @@
 
 class IInteractable;
 
+
+DECLARE_DELEGATE_TwoParams(FInteractionHint,const FString&, bool)
+
 UCLASS(config=Game)
 class AFinalProjectCharacter : public ACharacter
 {
@@ -31,6 +34,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	//Delegate for set up the interaction hint and his visiblibility on the UI
+	FInteractionHint InteractionHint;
 protected:
 
 	/** Resets HMD orientation in VR. */
