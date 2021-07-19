@@ -82,12 +82,13 @@ void AFinalProjectCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Overlap begins"));
+	//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Overlap begins"));
 
 	//remains nullptr if OtherActor doesn't implement the IInteractable interface
 	InteractableActor = Cast<IInteractable>(OtherActor);
 	if (InteractableActor != nullptr)
 	{
+		InteractableActor->FocusStart_Implementation();
 		//Show Interaction Hint on UI
 		InteractionHint.ExecuteIfBound(InteractableActor->InteractionHint_Implementation() + " "
 			+ InteractableActor->InteractableObjectName_Implementation(), true);
@@ -99,10 +100,11 @@ void AFinalProjectCharacter::NotifyActorEndOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorEndOverlap(OtherActor);
 	
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Overlap ends"));
+	//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Overlap ends"));
 
 	if ((InteractableActor != nullptr) && (InteractableActor == Cast<IInteractable>(OtherActor)))
 	{
+		InteractableActor->FocusEnd_Implementation();
 		//Hide interaction hint on UI
 		InteractionHint.ExecuteIfBound("", false);
 		InteractableActor = nullptr;

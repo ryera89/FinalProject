@@ -8,6 +8,8 @@
 #include "ActivableActor.generated.h"
 
 
+class UAnimationBaseComponent;
+
 DECLARE_EVENT_OneParam(AActivableActor,FOnActivatedStateChanged,bool)
 
 UCLASS()
@@ -19,17 +21,29 @@ public:
 	// Sets default values for this actor's properties
 	AActivableActor();
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "RootComponent")
+	USceneComponent* Root;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mesh")
+	UStaticMeshComponent* Mesh;
+
 	FOnActivatedStateChanged OnActivatedStateChanged;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
-	FString InteractionHint = "Pickup";
+	FString ActivationHint = "Activate";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
-	FString ItemName;
+	FString DeactivationHint = "Deactivate";
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
+	FString ActivableActorName;
+
+    void Activated_Implementation() override;
+
+    void Deactivated_Implementation() override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -38,18 +52,27 @@ public:
 	void Interacted_Implementation(AActor* OtherActor) override;
 	
 	/** Interaction hint to show on UI*/
-	FORCEINLINE FString InteractionHint_Implementation() const override { return InteractionHint; }
+	FORCEINLINE FString InteractionHint_Implementation() const override;
 
 	/** Name of the object to be interacted with, show on UI*/
-	FORCEINLINE FString InteractableObjectName_Implementation() const  override { return ItemName; }
+	FORCEINLINE FString InteractableObjectName_Implementation() const  override { return ActivableActorName; }
 
 	//Activable Interface
 	FORCEINLINE  bool IsActive_Implementation() const override { return bIsActive; };
 
-    void Activated_Implementation() override;
+	FORCEINLINE UStaticMeshComponent*  ActivableMeshComponent_Implementation() override{ return Mesh; }
 
-    void Deactivated_Implementation() override;
+	/** this function return true if the Activable Actor is on an activation transition*/
+	FORCEINLINE bool IsInTransition_Implementation() const { return bInTransition; }
+
+	/** Set the the transition state of the activable actor*/
+	FORCEINLINE void SetTransitionState_Implementation(bool InTransition) { bInTransition = InTransition; }
 
 private:
 	bool bIsActive = false;
+	bool bInTransition = false;
+
+	/*Find is the interactable object has any animation component*/
+	//UPROPERTY() 
+	TInlineComponentArray<UAnimationBaseComponent*> AnimationComponents;
 };
