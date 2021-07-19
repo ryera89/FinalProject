@@ -37,50 +37,64 @@ void AActivableActor::Tick(float DeltaTime)
 void AActivableActor::Interacted_Implementation(AActor* OtherActor)
 {
 	//Execute only if the Actor is not currently in transition (animation)
-	if (!IsInTransition_Implementation())
+	if (!bInTransition)
 	{
-		if (IsActive_Implementation())
+		switch (State)
+		{
+		case EActivableState::Activated:
 		{
 			Deactivated_Implementation();
 			if (AFinalProjectCharacter* Character = Cast<AFinalProjectCharacter>(OtherActor))
 			{
 				Character->InteractionHint.ExecuteIfBound(ActivationHint + " " + ActivableActorName, true);
 			}
+			break;
 		}
-		else
+		case EActivableState::Deactivated:
 		{
 			Activated_Implementation();
 			if (AFinalProjectCharacter* Character = Cast<AFinalProjectCharacter>(OtherActor))
 			{
 				Character->InteractionHint.ExecuteIfBound(DeactivationHint + " " + ActivableActorName, true);
 			}
+			break;
 		}
-
+		default:
+			break;
+		}
 	}
 }
 
 FString AActivableActor::InteractionHint_Implementation() const
 {
-	return (IsActive_Implementation()) ? DeactivationHint : ActivationHint;
+	switch (State)
+	{
+	case EActivableState::Activated:
+		return DeactivationHint;
+	case EActivableState::Deactivated:
+		return ActivationHint;
+	default:
+		return FString();
+	}
 }
 
 void AActivableActor::Activated_Implementation()
 {
-	bIsActive = true;
+	State = EActivableState::Activated;
 	//If the actor has animation components then turn on the activation transitions
 	//the animation component will be responsible for notifying the actor when the transition ends
-	if (AnimationComponents.Num() > 0) SetTransitionState_Implementation(true);
+	//if (AnimationComponents.Num() > 0) SetTransitionState_Implementation(true);
 
-	OnActivatedStateChanged.Broadcast(true);
+	ActivableStateChangedEvent.Broadcast(State);
 }
 
 void AActivableActor::Deactivated_Implementation()
 {
-	bIsActive = false;
+	State = EActivableState::Deactivated;
 	//If the actor has animation components then turn on the activation transitions
 	//the animation component will be responsible for notifying the actor when the transition ends
-	if (AnimationComponents.Num() > 0) SetTransitionState_Implementation(true);
+	//if (AnimationComponents.Num() > 0) SetTransitionState_Implementation(true);
 
-	OnActivatedStateChanged.Broadcast(false);
+	ActivableStateChangedEvent.Broadcast(State);
 }
 

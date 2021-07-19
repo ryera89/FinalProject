@@ -46,6 +46,9 @@ protected:
 
 	UFUNCTION()
 	void AnimationEnded();
+
+	UFUNCTION()
+	void PlayAnimation(EActivableState State);
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

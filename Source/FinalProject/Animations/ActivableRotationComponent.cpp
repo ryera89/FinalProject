@@ -18,12 +18,30 @@ UActivableRotationComponent::UActivableRotationComponent()
 void UActivableRotationComponent::TimelineProgress(float alpha)
 {
 	FRotator NewRotator = FMath::Lerp(StartRotator, EndRotator, alpha);
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString::Printf(TEXT("NewRotator (alpha = %f), (Pitch = %f, Yaw = %f, Roll = %f)"),alpha,NewRotator.Pitch,NewRotator.Yaw,NewRotator.Roll));
+	Parent->ActivableMeshComponent_Implementation()->SetRelativeRotation(NewRotator);
 }
 
 void UActivableRotationComponent::AnimationEnded()
 {
-	//When the animation ends set the parent Transition State
-	if (Parent != nullptr) Parent->SetTransitionState_Implementation(false);
+	//When the animation ends set the owner Transition State
+	if (Parent != nullptr) Parent->SetTransitionAnimationState_Implementation(false);
+}
+
+void UActivableRotationComponent::PlayAnimation(EActivableState State)
+{
+	Parent->SetTransitionAnimationState_Implementation(true); //Animation is playing
+	switch (State)
+	{
+	case EActivableState::Activated:
+		CurveVTimeline.PlayFromStart();
+		break;
+	case EActivableState::Deactivated:
+		CurveVTimeline.ReverseFromEnd();
+		break;
+	default:
+		break;
+	}
 }
 
 // Called when the game starts
@@ -41,6 +59,8 @@ void UActivableRotationComponent::BeginPlay()
 		OnTimelineEnd.BindUFunction(this, FName("AnimationEnded"));
 		CurveVTimeline.SetTimelineFinishedFunc(OnTimelineEnd);
 
+		Parent->OnActivableStateChanged().AddUObject(this, &UActivableRotationComponent::PlayAnimation);
+
 		FOnTimelineVector TimelineProgress;
 		TimelineProgress.BindUFunction(this, FName("TimelineProgress"));
 		CurveVTimeline.AddInterpVector(CurveVector, TimelineProgress);
@@ -55,21 +75,11 @@ void UActivableRotationComponent::BeginPlay()
 void UActivableRotationComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	CurveVTimeline.TickTimeline(DeltaTime);	
 	//Start Animation and continue until it finishes
-	if (Parent != nullptr && Parent->IsInTransition_Implementation())
-	{
-		//If activated play from start
-		if (Parent->IsActive_Implementation())
-		{
-			CurveVTimeline.PlayFromStart();
-			CurveVTimeline.TickTimeline(DeltaTime);
-		}
-		else
-		{
-			CurveVTimeline.Reverse();
-			CurveVTimeline.TickTimeline(DeltaTime);
-		}
-	}
+	//if (Parent != nullptr && Parent->IsTransitionAnimationPlaying_Implementation())
+	//{	
+	//   CurveVTimeline.TickTimeline(DeltaTime);	
+	//}
 }
 

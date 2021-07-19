@@ -10,8 +10,6 @@
 
 class UAnimationBaseComponent;
 
-DECLARE_EVENT_OneParam(AActivableActor,FOnActivatedStateChanged,bool)
-
 UCLASS()
 class FINALPROJECT_API AActivableActor : public AActor, public IActivable
 {
@@ -27,7 +25,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mesh")
 	UStaticMeshComponent* Mesh;
 
-	FOnActivatedStateChanged OnActivatedStateChanged;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -44,6 +41,7 @@ protected:
     void Activated_Implementation() override;
 
     void Deactivated_Implementation() override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -58,19 +56,22 @@ public:
 	FORCEINLINE FString InteractableObjectName_Implementation() const  override { return ActivableActorName; }
 
 	//Activable Interface
-	FORCEINLINE  bool IsActive_Implementation() const override { return bIsActive; };
+	FORCEINLINE  EActivableState GetState_Implementation() const override { return State; };
 
 	FORCEINLINE UStaticMeshComponent*  ActivableMeshComponent_Implementation() override{ return Mesh; }
 
 	/** this function return true if the Activable Actor is on an activation transition*/
-	FORCEINLINE bool IsInTransition_Implementation() const { return bInTransition; }
+	FORCEINLINE bool IsTransitionAnimationPlaying_Implementation() const { return bInTransition; }
 
 	/** Set the the transition state of the activable actor*/
-	FORCEINLINE void SetTransitionState_Implementation(bool InTransition) { bInTransition = InTransition; }
+	FORCEINLINE void SetTransitionAnimationState_Implementation(bool bAnimationPlaying) { bInTransition = bAnimationPlaying; }
 
+	DECLARE_DERIVED_EVENT(AActivableActor,IActivable::FActivableStateChangedEvent,FActivableStateChangedEvent)
+	FORCEINLINE virtual FActivableStateChangedEvent& OnActivableStateChanged() override { return ActivableStateChangedEvent; }
 private:
-	bool bIsActive = false;
+	EActivableState State = EActivableState::Deactivated;
 	bool bInTransition = false;
+	FActivableStateChangedEvent ActivableStateChangedEvent;
 
 	/*Find is the interactable object has any animation component*/
 	//UPROPERTY() 

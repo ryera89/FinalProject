@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "../Interfaces/Activable.h"
 #include "AnimationBaseComponent.generated.h"
 
 /*Base class for Animations does nothing just for convenient component lookups*/
