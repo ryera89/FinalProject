@@ -76,10 +76,5 @@ void UActivableRotationComponent::TickComponent(float DeltaTime, ELevelTick Tick
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	CurveVTimeline.TickTimeline(DeltaTime);	
-	//Start Animation and continue until it finishes
-	//if (Parent != nullptr && Parent->IsTransitionAnimationPlaying_Implementation())
-	//{	
-	//   CurveVTimeline.TickTimeline(DeltaTime);	
-	//}
 }
 

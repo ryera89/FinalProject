@@ -23,8 +23,6 @@ AActivableActor::AActivableActor()
 void AActivableActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	GetComponents(AnimationComponents);
 }
 
 // Called every frame
@@ -81,20 +79,12 @@ FString AActivableActor::InteractionHint_Implementation() const
 void AActivableActor::Activated_Implementation()
 {
 	State = EActivableState::Activated;
-	//If the actor has animation components then turn on the activation transitions
-	//the animation component will be responsible for notifying the actor when the transition ends
-	//if (AnimationComponents.Num() > 0) SetTransitionState_Implementation(true);
-
 	ActivableStateChangedEvent.Broadcast(State);
 }
 
 void AActivableActor::Deactivated_Implementation()
 {
 	State = EActivableState::Deactivated;
-	//If the actor has animation components then turn on the activation transitions
-	//the animation component will be responsible for notifying the actor when the transition ends
-	//if (AnimationComponents.Num() > 0) SetTransitionState_Implementation(true);
-
 	ActivableStateChangedEvent.Broadcast(State);
 }
 

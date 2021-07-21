@@ -72,8 +72,4 @@ private:
 	EActivableState State = EActivableState::Deactivated;
 	bool bInTransition = false;
 	FActivableStateChangedEvent ActivableStateChangedEvent;
-
-	/*Find is the interactable object has any animation component*/
-	//UPROPERTY() 
-	TInlineComponentArray<UAnimationBaseComponent*> AnimationComponents;
 };
