@@ -6,25 +6,23 @@
 #include "Components/ActorComponent.h"
 #include "../Interfaces/Animation.h"
 #include "Components/TimelineComponent.h"
-#include "RotationAnimation.generated.h"
-
+#include "TraslationAnimation.generated.h"
 
 class IAnimable;
 class UCurveVector;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class FINALPROJECT_API URotationAnimation : public UActorComponent, public IAnimation
-
+class FINALPROJECT_API UTraslationAnimation : public UActorComponent, public IAnimation
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	URotationAnimation();
+	UTraslationAnimation();
 
-	/* How much rotate */
+	/* How much traslate */
 	UPROPERTY(EditAnywhere, Category = "Animation|Offset")
-	FRotator RotationOffset;
+	FVector PositionOffset;
 
 protected:
 	// Called when the game starts
@@ -73,9 +71,11 @@ public:
 
 private:
 	bool bIsPlaying = false;
-	/*Start and End Rotators of the animable meshes*/
-	TArray<FRotator> StartRotators;
-	TArray<FRotator> EndRotators;
+	/*Start and End Positions of the animable meshes*/
+	TArray<FVector> StartPositions;
+	TArray<FVector> EndPositions;
 	/*Pointer to the animable interface implementation of the owner actor*/
 	IAnimable* AnimableActor;
+
+		
 };

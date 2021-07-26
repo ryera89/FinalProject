@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RotationAnimation.h"
+#include "TraslationAnimation.h"
 #include "../Interfaces/Animable.h"
 
 // Sets default values for this component's properties
-URotationAnimation::URotationAnimation()
+UTraslationAnimation::UTraslationAnimation()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -16,7 +16,7 @@ URotationAnimation::URotationAnimation()
 
 
 // Called when the game starts
-void URotationAnimation::BeginPlay()
+void UTraslationAnimation::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -37,66 +37,61 @@ void URotationAnimation::BeginPlay()
 
 
 // Called every frame
-void URotationAnimation::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UTraslationAnimation::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	CurveVTimeline.TickTimeline(DeltaTime);	
 }
 
-void URotationAnimation::SetStartingPropertiesValues_Implementation(const TArray<USceneComponent*>& AnimableComponents)
+void UTraslationAnimation::SetStartingPropertiesValues_Implementation(const TArray<USceneComponent*>& AnimableComponents)
 {
 	//Clears previus set values
-	StartRotators.Empty();
-	EndRotators.Empty();
+	StartPositions.Empty();
+	EndPositions.Empty();
 	for (USceneComponent* component : AnimableComponents)
 		{
-			FRotator StartR = component->GetRelativeRotation();
-			FRotator EndR = StartR + RotationOffset;
-			StartRotators.Emplace(StartR);
-			EndRotators.Emplace(EndR);
+			FVector StartPos = component->GetRelativeLocation();
+			FVector EndPos = StartPos + PositionOffset;
+			StartPositions.Emplace(StartPos);
+			EndPositions.Emplace(EndPos);
 		}
 }
-
-void URotationAnimation::Play_Implementation()
+void UTraslationAnimation::Play_Implementation()
 {
 	bIsPlaying = true;
 	CurveVTimeline.Play();
 }
 
-void URotationAnimation::PlayFromStart_Implementation()
+void UTraslationAnimation::PlayFromStart_Implementation()
 {
 	bIsPlaying = true;
 	CurveVTimeline.PlayFromStart();
 }
 
-void URotationAnimation::Reverse_Implementation()
+void UTraslationAnimation::Reverse_Implementation()
 {
 	bIsPlaying = true;
 	CurveVTimeline.Reverse();
 }
 
-void URotationAnimation::ReverseFromEnd_Implementation()
+void UTraslationAnimation::ReverseFromEnd_Implementation()
 {
 	bIsPlaying = true;
 	CurveVTimeline.ReverseFromEnd();
 }
-
-void URotationAnimation::Stop_Implementation()
+void UTraslationAnimation::Stop_Implementation()
 {
 	bIsPlaying = false;
 	CurveVTimeline.Stop();
 }
 
-void URotationAnimation::TimelineProgress(float alpha)
+void UTraslationAnimation::TimelineProgress(float alpha)
 {
-	for (int i = 0; i < StartRotators.Num(); ++i)
+	for (int i = 0; i < StartPositions.Num(); ++i)
 	{
-		FRotator NewRotator = FMath::Lerp(StartRotators[i], EndRotators[i], alpha);
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString::Printf(TEXT("NewRotator (alpha = %f), (Pitch = %f, Yaw = %f, Roll = %f)"),alpha,NewRotator.Pitch,NewRotator.Yaw,NewRotator.Roll));
-		AnimableActor->GetAnimableSceneComponents()[i]->SetRelativeRotation(NewRotator);
+		FVector NewPosition = FMath::Lerp(StartPositions[i], EndPositions[i], alpha);
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString::Printf(TEXT("NewPosition (X = %f, Y = %f, Z = %f)"),NewPosition.X,NewPosition.Y,NewPosition.Z));
+		AnimableActor->GetAnimableSceneComponents()[i]->SetRelativeLocation(NewPosition);
 	}
 }
-
-
-

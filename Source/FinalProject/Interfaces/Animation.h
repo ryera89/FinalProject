@@ -44,6 +44,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Animation")
 	void ReverseFromEnd();
 
+	/*Stop the animation*/
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Animation")
+	void Stop();
+
 	/*Return true if the animation is playing, false otherwise*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Animation")
 	bool IsPlaying() const;
