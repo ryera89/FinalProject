@@ -2,9 +2,8 @@
 
 
 #include "ActivableActor.h"
-#include "ActivableActor.h"
 #include "../FinalProjectCharacter.h"
-#include "../Animations/AnimationBaseComponent.h"
+#include "../Interfaces/Animation.h"
 
 // Sets default values
 AActivableActor::AActivableActor()
@@ -14,15 +13,30 @@ AActivableActor::AActivableActor()
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	RootComponent = Root;
-
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
-	Mesh->SetupAttachment(Root);
 }
 
 // Called when the game starts or when spawned
 void AActivableActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Get the animable components of the actors actors who inherit from this class
+	TInlineComponentArray<USceneComponent*> SceneComponents(this);
+
+	//Get the meshes who has the tag "Animable"
+	for (USceneComponent* component : SceneComponents)
+	{
+		if (component->ComponentHasTag(FName("Animable")))
+		{
+			AnimableComponents.Add(component);
+		}
+	}
+	TArray<UActorComponent*> AnimArray = GetComponentsByInterface(UAnimation::StaticClass());
+	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, FString::Printf(TEXT("Animation Components Found %i"),AnimArray.Num()));
+	/*Only one Animation component will be used*/
+	if (AnimArray.Num()) Animation = Cast<IAnimation>(AnimArray[0]);
+
+	if (Animation != nullptr) Animation->SetStartingPropertiesValues_Implementation(AnimableComponents);
 }
 
 // Called every frame
@@ -32,59 +46,30 @@ void AActivableActor::Tick(float DeltaTime)
 
 }
 
-void AActivableActor::Interacted_Implementation(AActor* OtherActor)
+bool AActivableActor::IsAnimationPlaying_Implementation() const
 {
-	//Execute only if the Actor is not currently in transition (animation)
-	if (!bInTransition)
+	if (Animation != nullptr)
 	{
-		switch (State)
-		{
-		case EActivableState::Activated:
-		{
-			Deactivated_Implementation();
-			if (AFinalProjectCharacter* Character = Cast<AFinalProjectCharacter>(OtherActor))
-			{
-				Character->InteractionHint.ExecuteIfBound(ActivationHint + " " + ActivableActorName, true);
-			}
-			break;
-		}
-		case EActivableState::Deactivated:
-		{
-			Activated_Implementation();
-			if (AFinalProjectCharacter* Character = Cast<AFinalProjectCharacter>(OtherActor))
-			{
-				Character->InteractionHint.ExecuteIfBound(DeactivationHint + " " + ActivableActorName, true);
-			}
-			break;
-		}
-		default:
-			break;
-		}
+		return Animation->IsPlaying_Implementation();
 	}
-}
-
-FString AActivableActor::InteractionHint_Implementation() const
-{
-	switch (State)
-	{
-	case EActivableState::Activated:
-		return DeactivationHint;
-	case EActivableState::Deactivated:
-		return ActivationHint;
-	default:
-		return FString();
-	}
+	return false;
 }
 
 void AActivableActor::Activated_Implementation()
 {
 	State = EActivableState::Activated;
+
+	if (Animation != nullptr) Animation->Play_Implementation();
+
 	ActivableStateChangedEvent.Broadcast(State);
 }
 
 void AActivableActor::Deactivated_Implementation()
 {
 	State = EActivableState::Deactivated;
+
+	if (Animation != nullptr) Animation->Reverse_Implementation();
+
 	ActivableStateChangedEvent.Broadcast(State);
 }
 

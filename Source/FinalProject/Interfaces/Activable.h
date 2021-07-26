@@ -3,8 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interactable.h"
-//#include "Components/MeshComponent.h"
+#include "UObject/Interface.h"
 #include "Activable.generated.h"
 
 UENUM()
@@ -16,7 +15,7 @@ enum class EActivableState
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UActivable : public UInteractable
+class UActivable : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -25,7 +24,7 @@ class UActivable : public UInteractable
 /**
  * Interface class for Activable Actors activable actors has two states activated and deactivated
  */
-class FINALPROJECT_API IActivable : public IInteractable
+class FINALPROJECT_API IActivable
 {
 	GENERATED_BODY()
 
@@ -34,20 +33,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Activable")
 	EActivableState GetState() const;
 
-	/** this function return true if the Activable Actor is on an activation transition*/
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Activable")
-	bool IsTransitionAnimationPlaying() const;
-
-	/** Set the the transition state of the activable actor*/
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Activable")
-	void SetTransitionAnimationState(bool bAnimationPlaying);
-
-	/** UMeshComponent that will display a animation or some kind of visual effect on activation and deactivation */
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Activable")
-	UMeshComponent* ActivableMeshComponent();
-
 	DECLARE_EVENT_OneParam(IActivable,FActivableStateChangedEvent,EActivableState)
-	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Activable")
 	virtual FActivableStateChangedEvent& OnActivableStateChanged() = 0;
 
 protected:
