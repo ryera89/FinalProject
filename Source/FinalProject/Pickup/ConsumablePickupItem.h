@@ -53,8 +53,15 @@ public:
 
 	FORCEINLINE FString InteractableObjectName_Implementation() const  override { return ItemName; }
 
+	DECLARE_DERIVED_EVENT(ACharacterActivableActor,IInteractable::FInteractedEvent,FInteractedEvent)
+	FORCEINLINE virtual FInteractedEvent& OnInteracted() override { return InteractedEvent; }
+
 	FORCEINLINE EPickableItemType ItemType_Implementation() const override { return EPickableItemType::Consumable; }
 
 	UFUNCTION(BlueprintCallable, category = "ConsumableType")
 	FORCEINLINE EConsumableItemType GetConsumableType() const { return ConsumableType; }
+
+private:
+	/*Broadcast event when interacted event happen*/
+	FInteractedEvent InteractedEvent;
 };

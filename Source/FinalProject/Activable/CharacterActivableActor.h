@@ -43,6 +43,8 @@ protected:
 
     void Deactivated_Implementation() override;
 
+	void ChangeState_Implementation();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -56,14 +58,17 @@ public:
 	/** Name of the object to be interacted with, show on UI*/
 	FORCEINLINE FString InteractableObjectName_Implementation() const  override { return ActivableActorName; }
 
+	DECLARE_DERIVED_EVENT(ACharacterActivableActor,IInteractable::FInteractedEvent,FInteractedEvent)
+	FORCEINLINE virtual FInteractedEvent& OnInteracted() override { return InteractedEvent; }
+
 	//*********************Activable Interface************************
 	FORCEINLINE  EActivableState GetState_Implementation() const override { return State; };
 
-	DECLARE_DERIVED_EVENT(AActivableActor,IActivable::FActivableStateChangedEvent,FActivableStateChangedEvent)
+	DECLARE_DERIVED_EVENT(ACharacterActivableActor,IActivable::FActivableStateChangedEvent,FActivableStateChangedEvent)
 	FORCEINLINE virtual FActivableStateChangedEvent& OnActivableStateChanged() override { return ActivableStateChangedEvent; }
 
 	//********************Animable Interface****************************
-	bool IsAnimationPlaying_Implementation() const;
+	bool IsAnimationPlaying_Implementation() const override;
 
 	/** Array of USceneComponent that will display a animation or some kind of visual effect*/
 	FORCEINLINE virtual const TArray<USceneComponent*>&  GetAnimableSceneComponents() const override{ return AnimableComponents;}
@@ -72,6 +77,8 @@ private:
 	EActivableState State = EActivableState::Deactivated;
 	/*Broadcast event when the activable state change*/
 	FActivableStateChangedEvent ActivableStateChangedEvent;
+	/*Broadcast event when interacted event happen*/
+	FInteractedEvent InteractedEvent;
 	//Array of Meshes that should display some kind of animation or effect on activation or deactivation.
 	TArray<USceneComponent*> AnimableComponents;
 	//Pointer to the Animation to execute on activation and deactivation

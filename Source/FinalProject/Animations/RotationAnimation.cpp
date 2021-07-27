@@ -90,10 +90,10 @@ void URotationAnimation::Stop_Implementation()
 
 void URotationAnimation::TimelineProgress(float alpha)
 {
-	for (int i = 0; i < StartRotators.Num(); ++i)
+	for (int i = 0; i < AnimableActor->GetAnimableSceneComponents().Num(); ++i)
 	{
 		FRotator NewRotator = FMath::Lerp(StartRotators[i], EndRotators[i], alpha);
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString::Printf(TEXT("NewRotator (alpha = %f), (Pitch = %f, Yaw = %f, Roll = %f)"),alpha,NewRotator.Pitch,NewRotator.Yaw,NewRotator.Roll));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString::Printf(TEXT("NewRotator (alpha = %f), (Pitch = %f, Yaw = %f, Roll = %f)"),alpha,NewRotator.Pitch,NewRotator.Yaw,NewRotator.Roll));
 		AnimableActor->GetAnimableSceneComponents()[i]->SetRelativeRotation(NewRotator);
 	}
 }

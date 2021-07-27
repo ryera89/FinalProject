@@ -32,6 +32,7 @@ void AConsumablePickupItem::Tick(float DeltaTime)
 
 void AConsumablePickupItem::Interacted_Implementation(AActor* OtherActor)
 {
+	InteractedEvent.Broadcast();
 	//Action the actor that pickup the object not implemented yet.
 	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Item " + ItemName + " picked"));
 	//after notify the actor inventory  destroy the item

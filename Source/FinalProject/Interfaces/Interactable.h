@@ -43,4 +43,7 @@ public:
 	/** Name of the object to be interacted with, show on UI*/
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	FString InteractableObjectName() const;
+
+	DECLARE_EVENT(IInteractable,FInteractedEvent)
+	virtual FInteractedEvent& OnInteracted() = 0;
 };

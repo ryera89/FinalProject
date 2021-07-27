@@ -88,10 +88,12 @@ void UTraslationAnimation::Stop_Implementation()
 
 void UTraslationAnimation::TimelineProgress(float alpha)
 {
-	for (int i = 0; i < StartPositions.Num(); ++i)
+	//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green,
+	//	FString::Printf(TEXT("Animable Bar Meshes %i"),AnimableActor->GetAnimableSceneComponents().Num()));
+	for (int i = 0; i < AnimableActor->GetAnimableSceneComponents().Num(); ++i)
 	{
 		FVector NewPosition = FMath::Lerp(StartPositions[i], EndPositions[i], alpha);
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString::Printf(TEXT("NewPosition (X = %f, Y = %f, Z = %f)"),NewPosition.X,NewPosition.Y,NewPosition.Z));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString::Printf(TEXT("NewPosition (X = %f, Y = %f, Z = %f)"),NewPosition.X,NewPosition.Y,NewPosition.Z));
 		AnimableActor->GetAnimableSceneComponents()[i]->SetRelativeLocation(NewPosition);
 	}
 }

@@ -4,6 +4,7 @@
 #include "ActivableActor.h"
 #include "../FinalProjectCharacter.h"
 #include "../Interfaces/Animation.h"
+#include "../Interfaces/Interactable.h"
 
 // Sets default values
 AActivableActor::AActivableActor()
@@ -23,6 +24,8 @@ void AActivableActor::BeginPlay()
 	//Get the animable components of the actors actors who inherit from this class
 	TInlineComponentArray<USceneComponent*> SceneComponents(this);
 
+	//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, 
+	//	FString::Printf(TEXT("Scene Components Found on activable actor %i"),SceneComponents.Num()));
 	//Get the meshes who has the tag "Animable"
 	for (USceneComponent* component : SceneComponents)
 	{
@@ -31,12 +34,17 @@ void AActivableActor::BeginPlay()
 			AnimableComponents.Add(component);
 		}
 	}
+	//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, FString::Printf(TEXT("Animable Components Found %i"),AnimableComponents.Num()));
 	TArray<UActorComponent*> AnimArray = GetComponentsByInterface(UAnimation::StaticClass());
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, FString::Printf(TEXT("Animation Components Found %i"),AnimArray.Num()));
 	/*Only one Animation component will be used*/
 	if (AnimArray.Num()) Animation = Cast<IAnimation>(AnimArray[0]);
 
 	if (Animation != nullptr) Animation->SetStartingPropertiesValues_Implementation(AnimableComponents);
+
+	if (TriggerEventSource != nullptr)
+	{
+		TriggerEventSource->OnInteracted().AddUObject(this, &AActivableActor::ChangeState_Implementation);
+	}
 }
 
 // Called every frame
@@ -44,6 +52,18 @@ void AActivableActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AActivableActor::ChangeState_Implementation()
+{
+	if (State == EActivableState::Activated)
+	{
+		Deactivated_Implementation();
+	}
+	else
+	{
+		Activated_Implementation();
+	}
 }
 
 bool AActivableActor::IsAnimationPlaying_Implementation() const

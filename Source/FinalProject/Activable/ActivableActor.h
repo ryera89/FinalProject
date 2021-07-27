@@ -10,6 +10,7 @@
 
 
 class IAnimation;
+class IInteractable;
 
 UCLASS()
 class FINALPROJECT_API AActivableActor : public AActor, public IActivable, public IAnimable
@@ -23,27 +24,28 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "RootComponent")
 	USceneComponent* Root;
 
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Mesh")
-	//UStaticMeshComponent* Mesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TriggerEvent")
+	TScriptInterface<class IInteractable> TriggerEventSource;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
-	FString ActivationHint = "Activate";
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
+	//FString ActivationHint = "Activate";
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
-	FString DeactivationHint = "Deactivate";
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
+	//FString DeactivationHint = "Deactivate";
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
-	FString ActivableActorName;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
+	//FString ActivableActorName;
 
 	//************************Protected Activable Interface*****************************
     void Activated_Implementation() override;
 
     void Deactivated_Implementation() override;
 
+	void ChangeState_Implementation();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -31,7 +31,7 @@ void ACharacterActivableActor::BeginPlay()
 		}
 	}
 	TArray<UActorComponent*> AnimArray = GetComponentsByInterface(UAnimation::StaticClass());
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, FString::Printf(TEXT("Animation Components Found %i"),AnimArray.Num()));
+	//GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, FString::Printf(TEXT("Animation Components Found %i"),AnimArray.Num()));
 	/*Only one Animation component will be used*/
 	if (AnimArray.Num()) Animation = Cast<IAnimation>(AnimArray[0]);
 
@@ -52,6 +52,8 @@ void ACharacterActivableActor::Interacted_Implementation(AActor* OtherActor)
 	//Execute only if the the animations is not playing
 	if (!IsAnimationPlaying_Implementation())
 	{
+		InteractedEvent.Broadcast();
+
 		switch (State)
 		{
 		case EActivableState::Activated:
@@ -88,6 +90,18 @@ FString ACharacterActivableActor::InteractionHint_Implementation() const
 		return ActivationHint;
 	default:
 		return FString();
+	}
+}
+
+void ACharacterActivableActor::ChangeState_Implementation()
+{
+	if (State == EActivableState::Activated)
+	{
+		Deactivated_Implementation();
+	}
+	else
+	{
+		Activated_Implementation();
 	}
 }
 

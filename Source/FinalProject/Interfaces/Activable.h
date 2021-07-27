@@ -42,4 +42,7 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Activable")
     void Deactivated();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Activable")
+	void ChangeState();
 };
