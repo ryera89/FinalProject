@@ -35,9 +35,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Timeline")
 	UCurveVector* CurveVector;
 
+	//***********************Animation Protected Interface***************************
 	/*This function will be called when the timeline ends*/
-	UFUNCTION()
-	void AnimationEnded() { bIsPlaying = false; }
+	void AnimationEnded_Implementation() override;
 
 public:	
 	// Called every frame
@@ -45,25 +45,28 @@ public:
 
 	/***********************Animation Iterface************************/
 	/*Set the starting values of the properties target of the animation*/
-	void SetStartingPropertiesValues_Implementation(const TArray<USceneComponent*>& AnimableComponents);
+	void SetStartingPropertiesValues_Implementation(const TArray<USceneComponent*>& AnimableComponents) override;
 
 	/*Play the animation the target are the AnimableMeshes*/
-	void Play_Implementation();
+	void Play_Implementation() override;
 
 	/*Play the animation the target are the AnimableMeshes from start*/
-	void PlayFromStart_Implementation();
+	void PlayFromStart_Implementation() override;
 
 	/*Play on reverse the animation the target are the AnimableMeshes*/
-	void Reverse_Implementation();
+	void Reverse_Implementation() override;
 
 	/*Play on reverse the animation the target are the AnimableMeshes statring form the end*/
-	void ReverseFromEnd_Implementation();
+	void ReverseFromEnd_Implementation() override;
 
 	/*Stop the animation*/
-	void Stop_Implementation();
+	void Stop_Implementation() override;
 
 	/*Return true if the animation is playing, false otherwise*/
-	FORCEINLINE bool IsPlaying_Implementation() const { return bIsPlaying; }
+	FORCEINLINE bool IsPlaying_Implementation() const override { return bIsPlaying; }
+
+	DECLARE_DERIVED_EVENT(UTraslationAnimation,IAnimation::FAnimationEndedEvent,FAnimationEndedEvent)
+	FORCEINLINE virtual FAnimationEndedEvent& OnAnimationEnded() override { return AnimationEndedEvent; }
 	/****************************************************************/
 	
 	UFUNCTION()
@@ -74,6 +77,8 @@ private:
 	/*Start and End Positions of the animable meshes*/
 	TArray<FVector> StartPositions;
 	TArray<FVector> EndPositions;
+	/*Event braodcasted when animation ends*/
+	FAnimationEndedEvent AnimationEndedEvent;
 	/*Pointer to the animable interface implementation of the owner actor*/
 	IAnimable* AnimableActor;
 

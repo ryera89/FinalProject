@@ -36,6 +36,12 @@ void UTraslationAnimation::BeginPlay()
 }
 
 
+inline void UTraslationAnimation::AnimationEnded_Implementation() 
+{ 
+	AnimationEndedEvent.Broadcast();
+    bIsPlaying = false;
+}
+
 // Called every frame
 void UTraslationAnimation::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {

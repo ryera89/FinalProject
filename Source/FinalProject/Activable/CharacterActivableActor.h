@@ -22,7 +22,7 @@ public:
 	// Sets default values for this actor's properties
 	ACharacterActivableActor();
 
-UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "RootComponent")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "RootComponent")
 	USceneComponent* Root;
 
 protected:
@@ -38,12 +38,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
 	FString ActivableActorName;
 
+	/*Trigger for activation or deactivation*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TriggerEvent")
+	TScriptInterface<class IInteractable> TriggerEventSource;
+
 	//*******************Protected Activable Interface***********************
     void Activated_Implementation() override;
 
     void Deactivated_Implementation() override;
 
-	void ChangeState_Implementation();
+	void ChangeState_Implementation() override;
 
 public:	
 	// Called every frame
@@ -53,7 +57,7 @@ public:
 	void Interacted_Implementation(AActor* OtherActor) override;
 	
 	/** Interaction hint to show on UI*/
-	FORCEINLINE FString InteractionHint_Implementation() const override;
+	FString InteractionHint_Implementation() const override;
 
 	/** Name of the object to be interacted with, show on UI*/
 	FORCEINLINE FString InteractableObjectName_Implementation() const  override { return ActivableActorName; }

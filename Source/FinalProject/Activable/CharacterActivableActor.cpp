@@ -37,6 +37,10 @@ void ACharacterActivableActor::BeginPlay()
 
 	if (Animation != nullptr) Animation->SetStartingPropertiesValues_Implementation(AnimableComponents);
 
+	if (TriggerEventSource != nullptr)
+	{
+		TriggerEventSource->OnInteracted().AddUObject(this, &ACharacterActivableActor::ChangeState_Implementation);
+	}
 }
 
 // Called every frame
@@ -95,6 +99,9 @@ FString ACharacterActivableActor::InteractionHint_Implementation() const
 
 void ACharacterActivableActor::ChangeState_Implementation()
 {
+	/*interacted event fired*/
+	InteractedEvent.Broadcast();
+
 	if (State == EActivableState::Activated)
 	{
 		Deactivated_Implementation();

@@ -24,12 +24,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "RootComponent")
 	USceneComponent* Root;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TriggerEvent")
-	TScriptInterface<class IInteractable> TriggerEventSource;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	/*Trigger for activation or deactivation*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TriggerEvent")
+	TScriptInterface<class IInteractable> TriggerEventSource;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
 	//FString ActivationHint = "Activate";
@@ -45,7 +46,7 @@ protected:
 
     void Deactivated_Implementation() override;
 
-	void ChangeState_Implementation();
+	void ChangeState_Implementation() override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

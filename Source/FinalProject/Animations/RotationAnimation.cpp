@@ -35,6 +35,11 @@ void URotationAnimation::BeginPlay()
 	
 }
 
+inline void URotationAnimation::AnimationEnded_Implementation() 
+{ 
+	AnimationEndedEvent.Broadcast();
+    bIsPlaying = false;
+}
 
 // Called every frame
 void URotationAnimation::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

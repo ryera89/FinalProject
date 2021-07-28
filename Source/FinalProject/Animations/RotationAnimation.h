@@ -37,9 +37,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Timeline")
 	UCurveVector* CurveVector;
 
+	//***********************Animation Protected Interface***************************
 	/*This function will be called when the timeline ends*/
-	UFUNCTION()
-	void AnimationEnded() { bIsPlaying = false; }
+	void AnimationEnded_Implementation() override;
 
 public:	
 	// Called every frame
@@ -66,6 +66,9 @@ public:
 
 	/*Return true if the animation is playing, false otherwise*/
 	FORCEINLINE bool IsPlaying_Implementation() const { return bIsPlaying; }
+
+	DECLARE_DERIVED_EVENT(URotationAnimation,IAnimation::FAnimationEndedEvent,FAnimationEndedEvent)
+	FORCEINLINE virtual FAnimationEndedEvent& OnAnimationEnded() override { return AnimationEndedEvent; }
 	/****************************************************************/
 	
 	UFUNCTION()
@@ -76,6 +79,8 @@ private:
 	/*Start and End Rotators of the animable meshes*/
 	TArray<FRotator> StartRotators;
 	TArray<FRotator> EndRotators;
+	/*Event braodcasted when animation ends*/
+	FAnimationEndedEvent AnimationEndedEvent;
 	/*Pointer to the animable interface implementation of the owner actor*/
 	IAnimable* AnimableActor;
 };

@@ -52,4 +52,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Animation")
 	bool IsPlaying() const;
 
+	DECLARE_EVENT(IAnimation,FAnimationEndedEvent)
+	virtual FAnimationEndedEvent& OnAnimationEnded() = 0;
+
+protected:
+	/*This function will be called when the animation ends*/
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Animation")
+	void AnimationEnded();
 };
