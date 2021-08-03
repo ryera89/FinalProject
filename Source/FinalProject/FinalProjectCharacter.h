@@ -37,6 +37,11 @@ public:
 	//Delegate for set up the interaction hint and his visiblibility on the UI
 	FInteractionHint InteractionHint;
 protected:
+	virtual void BeginPlay() override;
+
+	/*Heatlh Component*/
+	UPROPERTY(EditDefaultsOnly,Category = "Health")
+	class UHealthComponent* HealthComponent;
 
 	/** Resets HMD orientation in VR. */
 	void OnResetVR();

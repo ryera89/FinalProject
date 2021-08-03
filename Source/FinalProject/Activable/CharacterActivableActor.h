@@ -52,6 +52,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	//virtual bool CanBeBaseForCharacter(APawn* pawn) const override;
 	
 	//*********************Interactable Interface********************
 	void Interacted_Implementation(AActor* OtherActor) override;

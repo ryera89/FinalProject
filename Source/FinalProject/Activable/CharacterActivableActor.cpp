@@ -13,6 +13,7 @@ ACharacterActivableActor::ACharacterActivableActor()
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	RootComponent = Root;
+
 }
 
 // Called when the game starts or when spawned
@@ -49,6 +50,11 @@ void ACharacterActivableActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+//bool ACharacterActivableActor::CanBeBaseForCharacter(APawn* pawn) const
+//{
+//	return false;
+//}
 
 void ACharacterActivableActor::Interacted_Implementation(AActor* OtherActor)
 {

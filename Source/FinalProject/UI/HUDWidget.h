@@ -17,7 +17,12 @@ class FINALPROJECT_API UHUDWidget : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetInteractionHint(const FString& Message, bool bVisible);
+
+	UFUNCTION(BlueprintCallable)
 	void ShowGameMessage(const FString& Message,float DisplayTime);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdatePlayerHealthBar(float Health,float MaxHealth);
 
 protected:
 
@@ -33,11 +38,15 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	FString InteractionMessage = "";
 
+	/*Player health percentage*/
 	UPROPERTY(BlueprintReadOnly)
-	float PlayerHealth;
+	float PlayerHealthPercentage = 1;
 
 	UPROPERTY(BlueprintReadOnly)
-	float PlayerStamina;
+	float PlayerStaminaPercentage;
+
+	UPROPERTY(BlueprintReadOnly)
+	ESlateVisibility InteractionHintVisibility = ESlateVisibility::Hidden;
 
 	virtual void NativeOnInitialized() override;
 
@@ -45,8 +54,6 @@ private:
 	void HideGameMessage();
 	FTimerHandle timer;
 
-	UFUNCTION()
-	void SetPlayerHealth(float Health);
 	UFUNCTION()
 	void SetPlayerStamina(float Stamina);
 	

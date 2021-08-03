@@ -29,11 +29,14 @@ void UHUDWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	
-	ACharacter* Character = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	if (AFinalProjectCharacter* PlayerCharacter = Cast<AFinalProjectCharacter>(Character))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("binding of messages"));
-		PlayerCharacter->InteractionHint.BindUObject(this, &UHUDWidget::SetInteractionHint);
+	
+	//ACharacter* Character = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	//if (AFinalProjectCharacter* PlayerCharacter = Cast<AFinalProjectCharacter>(Character))
+	//{
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("binding of messages"));
+		// 
+		//PlayerCharacter->InteractionHint.BindUObject(this, &UHUDWidget::SetInteractionHint);
+		// 
 		//AGameModeBase* GameMode = UGameplayStatics::GetGameMode(TheWorld);
 
 		/*AExamenParcialGameMode* MyGameMode = Cast<AExamenParcialGameMode>(GameMode);
@@ -47,7 +50,8 @@ void UHUDWidget::NativeOnInitialized()
 		
 		//PlayerCharacter->OnHealthChanged.AddUObject(this, &UHUDWidget::SetPlayerHealth);
 		//PlayerCharacter->OnStaminaChanged.AddUObject(this, &UHUDWidget::SetPlayerStamina);	
-	}
+	//}
+    
 }
 
 void UHUDWidget::HideGameMessage()
@@ -55,19 +59,22 @@ void UHUDWidget::HideGameMessage()
 	bGameMessageVisibility = false;
 }
 
-void UHUDWidget::SetPlayerHealth(float Health)
+void UHUDWidget::UpdatePlayerHealthBar(float Health,float MaxHealth)
 {
-	PlayerHealth = Health;
+
+	PlayerHealthPercentage = Health/MaxHealth;
 }
 
 void UHUDWidget::SetPlayerStamina(float Stamina)
 {
-	PlayerStamina = Stamina;
+	PlayerStaminaPercentage = Stamina;
 }
 
 void UHUDWidget::SetInteractionHint(const FString& Message,bool bVisible)
 {
 	InteractionMessage = Message;
 	bInteractionHintVisibility = bVisible;
+
+	InteractionHintVisibility = (bVisible) ? ESlateVisibility::Visible : ESlateVisibility::Hidden;
 }
 
