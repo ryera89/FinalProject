@@ -87,6 +87,7 @@ public:
 
 	virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 private:
 	//hold a pointer to the Actor wich the character wants to interact with
 	//if there isn't an Actor to interact with is equal to nullptr

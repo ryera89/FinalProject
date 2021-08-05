@@ -118,6 +118,13 @@ void AFinalProjectCharacter::NotifyActorEndOverlap(AActor* OtherActor)
 	}
 }
 
+float AFinalProjectCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (HealthComponent) HealthComponent->ModifyHealth(-DamageAmount);
+
+	return DamageAmount;
+}
+
 
 void AFinalProjectCharacter::BeginPlay()
 {
