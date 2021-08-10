@@ -5,6 +5,7 @@
 #include "../FinalProjectCharacter.h"
 #include "../Interfaces/Animation.h"
 #include "Components/BoxComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "Chest.h"
 
 // Sets default values
@@ -19,6 +20,9 @@ AChest::AChest()
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComponent"));
 	CollisionBox->InitBoxExtent(FVector(40, 50, 30));
 	CollisionBox->SetupAttachment(Root);
+
+	TreassureParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("TreassureParticlesComponent"));
+	TreassureParticleComponent->SetupAttachment(Root);
 }
 
 // Called when the game starts or when spawned
@@ -41,8 +45,19 @@ void AChest::BeginPlay()
 	/*Only one Animation component will be used*/
 	if (AnimArray.Num()) Animation = Cast<IAnimation>(AnimArray[0]);
 
-	if (Animation != nullptr) Animation->SetStartingPropertiesValues_Implementation(AnimableComponents);
-	
+	if (Animation != nullptr)
+	{
+		Animation->SetStartingPropertiesValues_Implementation(AnimableComponents);
+		Animation->OnAnimationEnded().AddUObject(this, &AChest::ActivateParticleSystem);
+	}
+		
+	if (TreassureParticleComponent) TreassureParticleComponent->DeactivateSystem();
+
+}
+
+void AChest::ActivateParticleSystem()
+{
+	TreassureParticleComponent->ActivateSystem();
 }
 
 // Called every frame
@@ -62,6 +77,7 @@ void AChest::Interacted_Implementation(AActor* OtherActor)
 	//Animation for opening the chest.
 	if (Animation != nullptr) Animation->PlayFromStart_Implementation();
 
+	//TreassureParticleComponent->ActivateSystem();
 	//Disable the collisions, once opened cant be interacted any more 
 	CollisionBox->DestroyComponent();
 	

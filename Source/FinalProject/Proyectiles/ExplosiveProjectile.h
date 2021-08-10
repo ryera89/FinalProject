@@ -27,6 +27,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Particles")
 	UParticleSystem* ImpactParticle;
+
+	/*Damage applied to actors hitted by the trap*/
+	UPROPERTY(EditAnywhere, Category = "Trap")
+	float Damage = 50;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

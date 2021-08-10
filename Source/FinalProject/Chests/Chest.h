@@ -10,6 +10,7 @@
 
 class IAnimation;
 class UBoxComponent;
+class UParticleSystemComponent;
 
 UCLASS()
 class FINALPROJECT_API AChest : public AActor, public IInteractable, public IAnimable
@@ -27,12 +28,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Collision Component")
 	UBoxComponent* CollisionBox;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Particles")
+	UParticleSystemComponent* TreassureParticleComponent;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
 	FString ActivableActorName = "Chest";
+
+	/*Proxy function to activate the treassure particle system*/
+	UFUNCTION()
+	void ActivateParticleSystem();
 
 public:	
 	// Called every frame

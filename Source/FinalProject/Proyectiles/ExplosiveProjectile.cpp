@@ -53,7 +53,7 @@ void AExplosiveProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* Othe
 		
 		//Damage the Hited actor
 		FDamageEvent DamageEvent;
-		OtherActor->TakeDamage(50, DamageEvent, nullptr, this);
+		OtherActor->TakeDamage(Damage, DamageEvent, nullptr, this);
 
 		//Deactivate the flying particle effect
 		FlyingParticleComponent->Deactivate();
