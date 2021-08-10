@@ -33,8 +33,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Activable")
 	EActivableState GetState() const;
 
-	DECLARE_EVENT_OneParam(IActivable,FActivableStateChangedEvent,EActivableState)
-	virtual FActivableStateChangedEvent& OnActivableStateChanged() = 0;
+	//DECLARE_EVENT_OneParam(IActivable,FActivableStateChangedEvent,EActivableState)
+	//virtual FActivableStateChangedEvent& OnActivableStateChanged() = 0;
+
+	DECLARE_EVENT(IActivable,FActivatedEvent)
+	virtual FActivatedEvent& OnActivated() = 0;
+
+	DECLARE_EVENT(IActivable,FDeactivatedEvent)
+	virtual FDeactivatedEvent& OnDeactivated() = 0;
 
 protected:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Activable")

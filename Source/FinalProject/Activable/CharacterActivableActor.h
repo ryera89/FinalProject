@@ -70,8 +70,14 @@ public:
 	//*********************Activable Interface************************
 	FORCEINLINE  EActivableState GetState_Implementation() const override { return State; };
 
-	DECLARE_DERIVED_EVENT(ACharacterActivableActor,IActivable::FActivableStateChangedEvent,FActivableStateChangedEvent)
-	FORCEINLINE virtual FActivableStateChangedEvent& OnActivableStateChanged() override { return ActivableStateChangedEvent; }
+	//DECLARE_DERIVED_EVENT(ACharacterActivableActor,IActivable::FActivableStateChangedEvent,FActivableStateChangedEvent)
+	//FORCEINLINE virtual FActivableStateChangedEvent& OnActivableStateChanged() override { return ActivableStateChangedEvent; }
+
+	DECLARE_DERIVED_EVENT(ACharacterActivableActor,IActivable::FActivatedEvent,FActivatedEvent)
+	FORCEINLINE  virtual FActivatedEvent& OnActivated() { return OnActivatedEvent; }
+
+	DECLARE_DERIVED_EVENT(ACharacterActivableActor,IActivable::FDeactivatedEvent,FDeactivatedEvent)
+	FORCEINLINE virtual FDeactivatedEvent& OnDeactivated() { return OnDeactivatedEvent; }
 
 	//********************Animable Interface****************************
 	bool IsAnimationPlaying_Implementation() const override;
@@ -82,7 +88,9 @@ public:
 private:
 	EActivableState State = EActivableState::Deactivated;
 	/*Broadcast event when the activable state change*/
-	FActivableStateChangedEvent ActivableStateChangedEvent;
+	//FActivableStateChangedEvent ActivableStateChangedEvent;
+	FActivatedEvent OnActivatedEvent;
+	FDeactivatedEvent OnDeactivatedEvent;
 	/*Broadcast event when interacted event happen*/
 	FInteractedEvent InteractedEvent;
 	//Array of Meshes that should display some kind of animation or effect on activation or deactivation.

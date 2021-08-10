@@ -19,10 +19,10 @@ public:
 	// Sets default values for this actor's properties
 	AProjectile();
 
-	UPROPERTY(EditDefaultsOnly, Category = "Proyectile")
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	USphereComponent* CollisionComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile Movement")
 	UProjectileMovementComponent* ProjectileMovementComponent;
 
 protected:

@@ -22,11 +22,34 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Particles")
 	UParticleSystemComponent* FlyingParticleComponent;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Particles")
+	UParticleSystem* MovingProjectile;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Particles")
+	UParticleSystem* ImpactParticle;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	/*Delay time in seconds for destroy the projectile after Hit event*/
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile ")
+	float AfterHitDestroyDelayTime = 2.0f;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	//Function to to handle whats happen when the Hit Event is fired.
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
+			FVector NormalImpulse, const FHitResult& Hit);
+private:
+	//timer for delay destruction of the projectile after hit event
+	FTimerHandle timer;
+
+	//Proxy function to call the Actor::Destroy() method 
+	UFUNCTION()
+	void DestroyExplosiveProjectile();
+
+	int HitEventTriggeredTimes = 0;
 };

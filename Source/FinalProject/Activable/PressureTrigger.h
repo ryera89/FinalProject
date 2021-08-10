@@ -46,8 +46,14 @@ public:
 	//****************************Activable Interface**********************************************
 	FORCEINLINE  EActivableState GetState_Implementation() const override { return State; };
 
-	DECLARE_DERIVED_EVENT(AActivableActor,IActivable::FActivableStateChangedEvent,FActivableStateChangedEvent)
-	FORCEINLINE virtual FActivableStateChangedEvent& OnActivableStateChanged() override { return ActivableStateChangedEvent; }
+	//DECLARE_DERIVED_EVENT(APressureTrigger,IActivable::FActivableStateChangedEvent,FActivableStateChangedEvent)
+	//FORCEINLINE virtual FActivableStateChangedEvent& OnActivableStateChanged() override { return ActivableStateChangedEvent; }
+
+	DECLARE_DERIVED_EVENT(APressureTrigger,IActivable::FActivatedEvent,FActivatedEvent)
+	FORCEINLINE  virtual FActivatedEvent& OnActivated() { return OnActivatedEvent; }
+
+	DECLARE_DERIVED_EVENT(APressureTrigger,IActivable::FDeactivatedEvent,FDeactivatedEvent)
+	FORCEINLINE virtual FDeactivatedEvent& OnDeactivated() { return OnDeactivatedEvent; }
 
 	//***************************Animable Interface***********************************************
 	bool IsAnimationPlaying_Implementation() const;
@@ -64,7 +70,11 @@ public:
 private:
 	EActivableState State = EActivableState::Deactivated;
 	/*Broadcast event when the activable state change*/
-	FActivableStateChangedEvent ActivableStateChangedEvent;
+	//FActivableStateChangedEvent ActivableStateChangedEvent;
+
+	FActivatedEvent OnActivatedEvent;
+
+	FDeactivatedEvent OnDeactivatedEvent;
 	//Array of Meshes that should display some kind of animation or effect on activation or deactivation.
 	TArray<USceneComponent*> AnimableComponents;
 	//Pointer to the Animation to execute on activation and deactivation

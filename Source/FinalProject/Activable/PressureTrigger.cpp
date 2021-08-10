@@ -65,7 +65,8 @@ void APressureTrigger::Activated_Implementation()
 
 	if (Animation != nullptr) Animation->Play_Implementation();
 
-	ActivableStateChangedEvent.Broadcast(State);
+	OnActivatedEvent.Broadcast();
+	//ActivableStateChangedEvent.Broadcast(State);
 }
 
 void APressureTrigger::Deactivated_Implementation()
@@ -74,7 +75,8 @@ void APressureTrigger::Deactivated_Implementation()
 
 	if (Animation != nullptr) Animation->Reverse_Implementation();
 
-	ActivableStateChangedEvent.Broadcast(State);
+	OnDeactivatedEvent.Broadcast();
+	//ActivableStateChangedEvent.Broadcast(State);
 }
 
 void APressureTrigger::RearmTrigger()

@@ -20,7 +20,6 @@ public:
 	// Sets default values for this actor's properties
 	AChest();
 
-	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "RootComponent")
 	USceneComponent* Root;
 

@@ -133,7 +133,8 @@ void ACharacterActivableActor::Activated_Implementation()
 
 	if (Animation != nullptr) Animation->PlayFromStart_Implementation();
 
-	ActivableStateChangedEvent.Broadcast(State);
+	OnActivatedEvent.Broadcast();
+	//ActivableStateChangedEvent.Broadcast(State);
 }
 
 void ACharacterActivableActor::Deactivated_Implementation()
@@ -142,6 +143,7 @@ void ACharacterActivableActor::Deactivated_Implementation()
 
 	if (Animation != nullptr) Animation->ReverseFromEnd_Implementation();
 
-	ActivableStateChangedEvent.Broadcast(State);
+	OnDeactivatedEvent.Broadcast();
+	//ActivableStateChangedEvent.Broadcast(State);
 }
 
