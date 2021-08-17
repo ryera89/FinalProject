@@ -7,7 +7,8 @@
 #include "FinalProjectCharacter.generated.h"
 
 class IInteractable;
-
+class UAnimSequence;
+class UAnimMontage;
 
 DECLARE_DELEGATE_TwoParams(FInteractionHint,const FString&, bool)
 
@@ -16,23 +17,23 @@ class AFinalProjectCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+		/** Camera boom positioning the camera behind the character */
+		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom;
 
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+		class UCameraComponent* FollowCamera;
 public:
 	AFinalProjectCharacter();
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
-	float BaseTurnRate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		float BaseTurnRate;
 
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
-	float BaseLookUpRate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		float BaseLookUpRate;
 
 	//Delegate for set up the interaction hint and his visiblibility on the UI
 	FInteractionHint InteractionHint;
@@ -40,8 +41,16 @@ protected:
 	virtual void BeginPlay() override;
 
 	/*Heatlh Component*/
-	UPROPERTY(EditDefaultsOnly,Category = "Health")
-	class UHealthComponent* HealthComponent;
+	UPROPERTY(EditDefaultsOnly, Category = "Health")
+		class UHealthComponent* HealthComponent;
+
+	/*Death Animation*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
+		UAnimSequence* DeathAnimation;
+
+	/*Death Animation*/
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
+	//UAnimMontage* DeathAnimationMontage;
 
 	/** Resets HMD orientation in VR. */
 	void OnResetVR();
@@ -52,14 +61,14 @@ protected:
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
-	/** 
-	 * Called via input to turn at a given rate. 
+	/**
+	 * Called via input to turn at a given rate.
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
 	void TurnAtRate(float Rate);
 
 	/**
-	 * Called via input to turn look up/down at a given rate. 
+	 * Called via input to turn look up/down at a given rate.
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
 	void LookUpAtRate(float Rate);
@@ -72,10 +81,23 @@ protected:
 
 	/** Handle for interaction with other actors (ie pickups, open doors etc)*/
 	void Interact();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement", meta = (ClampMin = "0.0"))
+	float WalkSpeed = 150.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement", meta = (ClampMin = "0.0"))
+	float RunSpeed = 600.f;
+
+	void Run();
+	void StopRunning();
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
+
+	UFUNCTION()
+	void HandleDeath(float CurrentHealth, float MaxHealth);
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -92,5 +114,6 @@ private:
 	//hold a pointer to the Actor wich the character wants to interact with
 	//if there isn't an Actor to interact with is equal to nullptr
 	IInteractable* InteractableActor = nullptr;
+	bool IsDeath = false;
 };
 

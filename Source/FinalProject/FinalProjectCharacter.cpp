@@ -12,6 +12,11 @@
 #include "Stats/HealthComponent.h"
 #include "UI/HUDWidget.h"
 #include "UI/InGameHUD.h"
+#include "Kismet/GameplayStatics.h"
+#include "Animation/AnimSequence.h"
+#include "Animation/AnimMontage.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "FinalProjectGameMode.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AFinalProjectCharacter
@@ -34,7 +39,8 @@ AFinalProjectCharacter::AFinalProjectCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
-	GetCharacterMovement()->AirControl = 0.2f;
+	GetCharacterMovement()->AirControl = 0.5f;
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -64,6 +70,8 @@ void AFinalProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AFinalProjectCharacter::Run);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &AFinalProjectCharacter::StopRunning);
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AFinalProjectCharacter::Interact);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AFinalProjectCharacter::MoveForward);
@@ -83,6 +91,57 @@ void AFinalProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AFinalProjectCharacter::OnResetVR);
+}
+
+
+void AFinalProjectCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	
+	//HealthComponent->OnHealthChange.AddUObject()
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (AInGameHUD* HUD = Cast<AInGameHUD>(PlayerController->GetHUD()))
+	{
+		InteractionHint.BindUObject(HUD, &AInGameHUD::InteractionHint);
+
+		if (HealthComponent != nullptr)
+		{
+			HealthComponent->OnHealthChange.AddUObject(HUD, &AInGameHUD::UpdatePlayerHealthBar);
+			HealthComponent->OnHealthChange.AddUObject(this, &AFinalProjectCharacter::HandleDeath);
+		}
+			
+	}
+	
+
+
+}
+
+void AFinalProjectCharacter::HandleDeath(float CurrentHealth, float MaxHealth)
+{
+	if (CurrentHealth <= 0.0f && !IsDeath)
+	{
+		IsDeath = true;
+		if (DeathAnimation != nullptr)
+		{
+			
+			DisableInput(Cast<APlayerController>(GetController()));
+			GetMesh()->PlayAnimation(DeathAnimation, false);
+			float DeathAnimDuration = DeathAnimation->GetPlayLength();	
+			AFinalProjectGameMode* GameMode = Cast<AFinalProjectGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+			/*handle the player death after the death animation ends*/
+			if (GameMode != nullptr)
+			{
+				FTimerHandle timer;
+				GetWorld()->GetTimerManager().SetTimer(timer, GameMode, 
+					&AFinalProjectGameMode::HandlePlayerDeath, DeathAnimDuration);
+			}
+			//
+			//UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
+			//AnimInst->Montage_Play(DeathAnimationMontage);
+		}
+		
+	}
 }
 
 void AFinalProjectCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -125,29 +184,6 @@ float AFinalProjectCharacter::TakeDamage(float DamageAmount, FDamageEvent const&
 	return DamageAmount;
 }
 
-
-void AFinalProjectCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-
-	
-	//HealthComponent->OnHealthChange.AddUObject()
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (AInGameHUD* HUD = Cast<AInGameHUD>(PlayerController->GetHUD()))
-	{
-		InteractionHint.BindUObject(HUD, &AInGameHUD::InteractionHint);
-
-		if (HealthComponent != nullptr)
-		{
-			HealthComponent->OnHealthChange.AddUObject(HUD, &AInGameHUD::UpdatePlayerHealthBar);
-		}
-			
-	}
-	
-
-
-}
-
 void AFinalProjectCharacter::OnResetVR()
 {
 	// If FinalProject is added to a project via 'Add Feature' in the Unreal Editor the dependency on HeadMountedDisplay in FinalProject.Build.cs is not automatically propagated
@@ -173,6 +209,16 @@ void AFinalProjectCharacter::Interact()
 {
 	if (InteractableActor != nullptr) InteractableActor->Interacted_Implementation(this);
 		//IInteractable::Execute_Interacted(InteractableActor, this);
+}
+
+void AFinalProjectCharacter::Run()
+{
+	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+}
+
+void AFinalProjectCharacter::StopRunning()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 150.f;
 }
 
 void AFinalProjectCharacter::TurnAtRate(float Rate)

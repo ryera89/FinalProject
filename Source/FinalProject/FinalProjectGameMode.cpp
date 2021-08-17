@@ -3,6 +3,7 @@
 #include "FinalProjectGameMode.h"
 #include "FinalProjectCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 AFinalProjectGameMode::AFinalProjectGameMode()
 {
@@ -12,4 +13,14 @@ AFinalProjectGameMode::AFinalProjectGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+}
+
+void AFinalProjectGameMode::HandlePlayerDeath()
+{
+	RestartLevel();
+}
+
+void AFinalProjectGameMode::RestartLevel()
+{
+	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
 }

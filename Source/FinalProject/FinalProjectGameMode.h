@@ -13,6 +13,10 @@ class AFinalProjectGameMode : public AGameModeBase
 
 public:
 	AFinalProjectGameMode();
+
+	void HandlePlayerDeath();
+
+	void RestartLevel();
 };
 
 

@@ -14,6 +14,7 @@ enum class EPickableItemType : uint8
 	Consumable, //potions, food, etc
 	Key,
 	Weapon,
+	MissionObject,
 };
 
 
