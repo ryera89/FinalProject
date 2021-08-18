@@ -83,7 +83,7 @@ protected:
 	void Interact();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement", meta = (ClampMin = "0.0"))
-	float WalkSpeed = 150.f;
+	float WalkSpeed = 300.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement", meta = (ClampMin = "0.0"))
 	float RunSpeed = 600.f;

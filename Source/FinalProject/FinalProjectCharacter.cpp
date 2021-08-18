@@ -112,9 +112,7 @@ void AFinalProjectCharacter::BeginPlay()
 		}
 			
 	}
-	
-
-
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
 void AFinalProjectCharacter::HandleDeath(float CurrentHealth, float MaxHealth)
@@ -179,9 +177,13 @@ void AFinalProjectCharacter::NotifyActorEndOverlap(AActor* OtherActor)
 
 float AFinalProjectCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (HealthComponent) HealthComponent->ModifyHealth(-DamageAmount);
+	if (!IsDeath)
+	{
+		if (HealthComponent) HealthComponent->ModifyHealth(-DamageAmount);
 
-	return DamageAmount;
+		return DamageAmount;
+	}
+	return 0.f;
 }
 
 void AFinalProjectCharacter::OnResetVR()
@@ -218,7 +220,7 @@ void AFinalProjectCharacter::Run()
 
 void AFinalProjectCharacter::StopRunning()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 150.f;
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
 void AFinalProjectCharacter::TurnAtRate(float Rate)
