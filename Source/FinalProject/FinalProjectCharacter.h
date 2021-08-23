@@ -17,23 +17,23 @@ class AFinalProjectCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-		/** Camera boom positioning the camera behind the character */
-		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class USpringArmComponent* CameraBoom;
+	/** Camera boom positioning the camera behind the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USpringArmComponent* CameraBoom;
 
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* FollowCamera;
+	class UCameraComponent* FollowCamera;
 public:
 	AFinalProjectCharacter();
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-		float BaseTurnRate;
+	float BaseTurnRate;
 
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-		float BaseLookUpRate;
+	float BaseLookUpRate;
 
 	//Delegate for set up the interaction hint and his visiblibility on the UI
 	FInteractionHint InteractionHint;
@@ -42,11 +42,15 @@ protected:
 
 	/*Heatlh Component*/
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
-		class UHealthComponent* HealthComponent;
+	class UHealthComponent* HealthComponent;
 
 	/*Death Animation*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
-		UAnimSequence* DeathAnimation;
+	UAnimSequence* DeathAnimation;
+
+	/*Death Animation*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
+	UAnimMontage* AttackMontage;
 
 	/*Death Animation*/
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
@@ -82,15 +86,10 @@ protected:
 	/** Handle for interaction with other actors (ie pickups, open doors etc)*/
 	void Interact();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement", meta = (ClampMin = "0.0"))
-	float WalkSpeed = 300.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement", meta = (ClampMin = "0.0"))
-	float RunSpeed = 600.f;
-
 	void Run();
 	void StopRunning();
 
+	void Attack();
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -98,6 +97,18 @@ protected:
 
 	UFUNCTION()
 	void HandleDeath(float CurrentHealth, float MaxHealth);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement", meta = (ClampMin = "0.0"))
+	float WalkSpeed = 300.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement", meta = (ClampMin = "0.0"))
+	float RunSpeed = 600.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	bool bIsWalking = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	bool bIsSprinting = false;
 
 public:
 	/** Returns CameraBoom subobject **/

@@ -15,6 +15,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Animation/AnimSequence.h"
 #include "Animation/AnimMontage.h"
+#include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "FinalProjectGameMode.h"
 
@@ -73,6 +74,8 @@ void AFinalProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AFinalProjectCharacter::Run);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &AFinalProjectCharacter::StopRunning);
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AFinalProjectCharacter::Interact);
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AFinalProjectCharacter::Attack);
+	//PlayerInputComponent->BindAction("Attack", IE_DoubleClick, this, &AFinalProjectCharacter::Attack);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AFinalProjectCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AFinalProjectCharacter::MoveRight);
@@ -212,17 +215,6 @@ void AFinalProjectCharacter::Interact()
 	if (InteractableActor != nullptr) InteractableActor->Interacted_Implementation(this);
 		//IInteractable::Execute_Interacted(InteractableActor, this);
 }
-
-void AFinalProjectCharacter::Run()
-{
-	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
-}
-
-void AFinalProjectCharacter::StopRunning()
-{
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-}
-
 void AFinalProjectCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
@@ -261,5 +253,28 @@ void AFinalProjectCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+void AFinalProjectCharacter::Run()
+{
+	bIsSprinting = true;
+	bIsWalking = false;
+	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+}
+
+void AFinalProjectCharacter::StopRunning()
+{
+	bIsWalking = true;
+	bIsSprinting = false;
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
+void AFinalProjectCharacter::Attack()
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, TEXT("Attack Method Fired"));
+	UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
+	if (AttackMontage && !AnimInst->Montage_IsPlaying(AttackMontage))
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, TEXT("Attack Animation Fired"));
+	    AnimInst->Montage_Play(AttackMontage);
 	}
 }
