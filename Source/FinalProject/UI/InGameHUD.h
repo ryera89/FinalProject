@@ -47,6 +47,6 @@ public:
 
   void SetQuestHint(const FString& Quest);
 private:
-  UHUDWidget* HUDWidget;
+  UHUDWidget* HUD_Widget;
 	
 };

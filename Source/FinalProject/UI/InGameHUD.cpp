@@ -15,10 +15,10 @@ void AInGameHUD::BeginPlay()
 
 	if (HUDWidgetClass)
 	{
-		HUDWidget = CreateWidget<UHUDWidget>(GetWorld(), HUDWidgetClass);
-		if (HUDWidget != nullptr)
+		HUD_Widget = CreateWidget<UHUDWidget>(GetWorld(), HUDWidgetClass);
+		if (HUD_Widget != nullptr)
 		{
-			HUDWidget->AddToViewport();
+			HUD_Widget->AddToViewport();
 		}
 	}
 }
@@ -31,21 +31,21 @@ void AInGameHUD::Tick(float DeltaTime)
 
 void AInGameHUD::UpdatePlayerHealthBar(float Health, float MaxHealth)
 {
-	HUDWidget->UpdatePlayerHealthBar(Health, MaxHealth);
+	HUD_Widget->UpdatePlayerHealthBar(Health, MaxHealth);
 }
 
 void AInGameHUD::InteractionHint(const FString& Message, bool bVisible)
 {
-	HUDWidget->SetInteractionHint(Message, bVisible);
+	HUD_Widget->SetInteractionHint(Message, bVisible);
 }
 
 void AInGameHUD::ShowGameMessage(const FString& Message, float time)
 {
-	HUDWidget->ShowGameMessage(Message, time);
+	HUD_Widget->ShowGameMessage(Message, time);
 }
 void AInGameHUD::SetQuestHint(const FString& Quest)
 {
-	HUDWidget->SetQuestHint(Quest);
+	HUD_Widget->SetQuestHint(Quest);
 }
 
 void AInGameHUD::DrawHUD()
