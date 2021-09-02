@@ -138,6 +138,12 @@ void AFinalProjectCharacter::HandleDeath(float CurrentHealth, float MaxHealth)
 				FTimerHandle timer;
 				GetWorld()->GetTimerManager().SetTimer(timer, GameMode, 
 					&AFinalProjectGameMode::HandlePlayerDeath, DeathAnimDuration);
+				
+				APlayerController* PlayerController = Cast<APlayerController>(GetController());
+				if (AInGameHUD* HUD = Cast<AInGameHUD>(PlayerController->GetHUD()))
+				{
+					HUD->ShowGameMessage("You Died", DeathAnimDuration);
+				}
 			}
 			//
 			//UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
