@@ -23,6 +23,9 @@ AChest::AChest()
 
 	TreassureParticleComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("TreassureParticlesComponent"));
 	TreassureParticleComponent->SetupAttachment(Root);
+
+	SpawnerComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SpawnerComponent"));
+	SpawnerComponent->SetupAttachment(Root);
 }
 
 // Called when the game starts or when spawned
@@ -49,6 +52,7 @@ void AChest::BeginPlay()
 	{
 		Animation->SetStartingPropertiesValues_Implementation(AnimableComponents);
 		Animation->OnAnimationEnded().AddUObject(this, &AChest::ActivateParticleSystem);
+		Animation->OnAnimationEnded().AddUObject(this, &AChest::SpawnPickupItem);
 	}
 		
 	if (TreassureParticleComponent) TreassureParticleComponent->DeactivateSystem();
@@ -58,6 +62,18 @@ void AChest::BeginPlay()
 void AChest::ActivateParticleSystem()
 {
 	TreassureParticleComponent->ActivateSystem();
+}
+
+void AChest::SpawnPickupItem()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("Spawn Chest Pick Up"));
+	if (Pickup_BP)
+	{
+		FActorSpawnParameters SpawnParams;
+
+		AConsumablePickupItem* Pickup = GetWorld()->SpawnActor<AConsumablePickupItem>(Pickup_BP, SpawnerComponent->GetComponentTransform(), SpawnParams);		
+		//Projectile->FireInDirection(NormalizedShootDirection);
+	}
 }
 
 // Called every frame

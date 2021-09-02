@@ -39,6 +39,15 @@ void AInGameHUD::InteractionHint(const FString& Message, bool bVisible)
 	HUDWidget->SetInteractionHint(Message, bVisible);
 }
 
+void AInGameHUD::ShowGameMessage(const FString& Message, float time)
+{
+	HUDWidget->ShowGameMessage(Message, time);
+}
+void AInGameHUD::SetQuestHint(const FString& Quest)
+{
+	HUDWidget->SetQuestHint(Quest);
+}
+
 void AInGameHUD::DrawHUD()
 {
 	Super::DrawHUD();

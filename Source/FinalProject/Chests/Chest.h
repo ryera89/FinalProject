@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "../Interfaces/Interactable.h"
 #include "../Interfaces/Animable.h"
+#include "../Pickup/ConsumablePickupItem.h"
 #include "Chest.generated.h"
 
 class IAnimation;
@@ -28,6 +29,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Collision Component")
 	UBoxComponent* CollisionBox;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SpawnerComponents")
+	USceneComponent* SpawnerComponent;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Particles")
 	UParticleSystemComponent* TreassureParticleComponent;
 
@@ -41,6 +45,13 @@ protected:
 	/*Proxy function to activate the treassure particle system*/
 	UFUNCTION()
 	void ActivateParticleSystem();
+
+	UFUNCTION()
+	void SpawnPickupItem();
+
+	/*Blueprint reference of AProjectile class*/
+	UPROPERTY(EditDefaultsOnly, Category = "PickupSpawning")
+	TSubclassOf<AConsumablePickupItem> Pickup_BP;
 
 public:	
 	// Called every frame

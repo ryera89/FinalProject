@@ -4,19 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Interactable.h"
+#include "../Inventory/Inventory.h"
 #include "Pickable.generated.h"
-
-
-/** Pickup item category/types enum (ie consumable, key, weapon etc...)*/
-UENUM()
-enum class EPickableItemType : uint8
-{
-	Consumable, //potions, food, etc
-	Key,
-	Weapon,
-	MissionObject,
-};
-
 
 
 // This class does not need to be modified.
@@ -48,6 +37,6 @@ public:
 
 	/** Item type/category  (ie consumable, key, weapon etc...) */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Pickup")
-	EPickableItemType ItemType() const;
+	EItemType ItemType() const;
 
 };

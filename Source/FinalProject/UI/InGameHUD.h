@@ -41,7 +41,11 @@ public:
   UFUNCTION(BlueprintCallable)
   void InteractionHint(const FString& Message, bool bVisible);
 
+  /*Proxy functon to access the HUDWidget*/
+  UFUNCTION(BlueprintCallable)
+  void ShowGameMessage(const FString& Message, float time);
 
+  void SetQuestHint(const FString& Quest);
 private:
   UHUDWidget* HUDWidget;
 	

@@ -7,6 +7,7 @@
 #include "../Interfaces/Interactable.h"
 #include "../Interfaces/Activable.h"
 #include "../Interfaces/Animable.h"
+#include "../Inventory/Inventory.h"
 #include "CharacterActivableActor.generated.h"
 
 
@@ -25,22 +26,41 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "RootComponent")
 	USceneComponent* Root;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CollisionComponent")
+	class UBoxComponent* CollisionBox;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Activable|UIHint")
 	FString ActivationHint = "Activate";
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Activable|UIHint")
 	FString DeactivationHint = "Deactivate";
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Pickup|UIHint")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Activable|UIHint")
 	FString ActivableActorName;
 
 	/*Trigger for activation or deactivation*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TriggerEvent")
 	TScriptInterface<class IInteractable> TriggerEventSource;
+
+	/*Set if the interactable object requieres that the player carried an item*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact")
+	bool bIsItemRequiredForIteration = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact")
+	EMissionObjectItemType ItemRequiredForIteraction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact")
+	FString ItemRequiredName = "";
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact")
+	bool bOneTimeInteractable = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interact")
+	float GameMessageTime = 3.f;
 
 	//*******************Protected Activable Interface***********************
     void Activated_Implementation() override;
@@ -48,6 +68,7 @@ protected:
     void Deactivated_Implementation() override;
 
 	void ChangeState_Implementation() override;
+
 
 public:	
 	// Called every frame
@@ -95,6 +116,10 @@ private:
 	FInteractedEvent InteractedEvent;
 	//Array of Meshes that should display some kind of animation or effect on activation or deactivation.
 	TArray<USceneComponent*> AnimableComponents;
+	//Array of Meshes that should become visible.
+	TArray<USceneComponent*> VisibleComponents;
 	//Pointer to the Animation to execute on activation and deactivation
 	IAnimation* Animation;
+
+	void Interact(AActor* OtherActor);
 };

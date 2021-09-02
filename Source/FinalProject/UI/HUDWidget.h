@@ -22,6 +22,9 @@ public:
 	void ShowGameMessage(const FString& Message,float DisplayTime);
 
 	UFUNCTION(BlueprintCallable)
+	void SetQuestHint(const FString& Quest);
+
+	UFUNCTION(BlueprintCallable)
 	void UpdatePlayerHealthBar(float Health,float MaxHealth);
 
 protected:
@@ -38,6 +41,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	FString InteractionMessage = "";
 
+	UPROPERTY(BlueprintReadOnly)
+	FString QuestHint = "Quest: Find the missing Sun Spear and active the pilar";
+
 	/*Player health percentage*/
 	UPROPERTY(BlueprintReadOnly)
 	float PlayerHealthPercentage = 1;
@@ -47,6 +53,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	ESlateVisibility InteractionHintVisibility = ESlateVisibility::Hidden;
+
+	UPROPERTY(BlueprintReadOnly)
+	ESlateVisibility GameMessageVisibility = ESlateVisibility::Hidden;
 
 	virtual void NativeOnInitialized() override;
 

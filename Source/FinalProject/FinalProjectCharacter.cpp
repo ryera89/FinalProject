@@ -10,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Interfaces/Interactable.h"
 #include "Stats/HealthComponent.h"
+#include "Inventory/Inventory.h"
 #include "UI/HUDWidget.h"
 #include "UI/InGameHUD.h"
 #include "Kismet/GameplayStatics.h"
@@ -57,6 +58,7 @@ AFinalProjectCharacter::AFinalProjectCharacter()
 	//Health Component
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	
+	InventoryComponent = CreateDefaultSubobject<UInventory>(TEXT("InventoryComponent"));
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -274,7 +276,14 @@ void AFinalProjectCharacter::Attack()
 	UAnimInstance* AnimInst = GetMesh()->GetAnimInstance();
 	if (AttackMontage && !AnimInst->Montage_IsPlaying(AttackMontage))
 	{
+		if (GetCharacterMovement()->IsFalling())
+		{
+			AnimInst->Montage_Play(AttackMontage, 2.f);
+		}
+		else
+		{
+			AnimInst->Montage_Play(AttackMontage, 1.5f);
+		}
 		//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, TEXT("Attack Animation Fired"));
-	    AnimInst->Montage_Play(AttackMontage);
 	}
 }

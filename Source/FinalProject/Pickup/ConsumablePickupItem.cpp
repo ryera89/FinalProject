@@ -2,6 +2,8 @@
 
 
 #include "ConsumablePickupItem.h"
+#include "../FinalProjectCharacter.h"
+#include "../Inventory/Inventory.h"
 
 // Sets default values
 AConsumablePickupItem::AConsumablePickupItem()
@@ -33,6 +35,13 @@ void AConsumablePickupItem::Tick(float DeltaTime)
 void AConsumablePickupItem::Interacted_Implementation(AActor* OtherActor)
 {
 	InteractedEvent.Broadcast();
+
+	AFinalProjectCharacter* PlayerCharacter = Cast<AFinalProjectCharacter>(OtherActor);
+	if (PlayerCharacter != nullptr)
+	{
+		PlayerCharacter->InventoryComponent->AddConsumableItem(ConsumableType, 1);
+	}
+	
 	//Action the actor that pickup the object not implemented yet.
 	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("Item " + ItemName + " picked"));
 	//after notify the actor inventory  destroy the item

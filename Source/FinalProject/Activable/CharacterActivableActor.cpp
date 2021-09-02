@@ -3,7 +3,9 @@
 
 #include "CharacterActivableActor.h"
 #include "../FinalProjectCharacter.h"
+#include "Components/BoxComponent.h"
 #include "../Interfaces/Animation.h"
+#include "../UI/InGameHUD.h"
 
 // Sets default values
 ACharacterActivableActor::ACharacterActivableActor()
@@ -14,6 +16,9 @@ ACharacterActivableActor::ACharacterActivableActor()
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	RootComponent = Root;
 
+	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComponent"));
+	CollisionBox->InitBoxExtent(FVector(40, 50, 30));
+	CollisionBox->SetupAttachment(Root);
 }
 
 // Called when the game starts or when spawned
@@ -29,6 +34,10 @@ void ACharacterActivableActor::BeginPlay()
 		if (component->ComponentHasTag(FName("Animable")))
 		{
 			AnimableComponents.Add(component);
+		}
+		if (component->ComponentHasTag(FName("Visible")))
+		{
+			VisibleComponents.Add(component);
 		}
 	}
 	TArray<UActorComponent*> AnimArray = GetComponentsByInterface(UAnimation::StaticClass());
@@ -59,35 +68,40 @@ void ACharacterActivableActor::Tick(float DeltaTime)
 void ACharacterActivableActor::Interacted_Implementation(AActor* OtherActor)
 {
 	
-	//Execute only if the the animations is not playing
-	if (!IsAnimationPlaying_Implementation())
+	if (bIsItemRequiredForIteration)
 	{
-		InteractedEvent.Broadcast();
+		//check if the item is carried by the player
+		AFinalProjectCharacter* Character = Cast<AFinalProjectCharacter>(OtherActor);
+		if (Character != nullptr)
+		{
+			if (Character->InventoryComponent->IsMissionObjectInInventory(ItemRequiredForIteraction, 1))
+			{
+				Interact(OtherActor);
 
-		switch (State)
-		{
-		case EActivableState::Activated:
-		{
-			Deactivated_Implementation();
-			if (AFinalProjectCharacter* Character = Cast<AFinalProjectCharacter>(OtherActor))
-			{
-				Character->InteractionHint.ExecuteIfBound(ActivationHint + " " + ActivableActorName, true);
+				Character->InventoryComponent->UseMissionObjectItem(ItemRequiredForIteraction, 1, true);
+
+				for (USceneComponent* component : VisibleComponents) component->SetVisibility(true);
+				
+				if (bOneTimeInteractable) CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			}
-			break;
-		}
-		case EActivableState::Deactivated:
-		{
-			Activated_Implementation();
-			if (AFinalProjectCharacter* Character = Cast<AFinalProjectCharacter>(OtherActor))
+			else
 			{
-				Character->InteractionHint.ExecuteIfBound(DeactivationHint + " " + ActivableActorName, true);
+				APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
+				if (AInGameHUD* HUD = Cast<AInGameHUD>(PlayerController->GetHUD()))
+				{
+					HUD->ShowGameMessage(ItemRequiredName + " Required", GameMessageTime);
+				}
 			}
-			break;
+			
 		}
-		default:
-			break;
-		}
+	
 	}
+	else 
+	{
+		Interact(OtherActor);
+		if (bOneTimeInteractable) CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	
 }
 
 FString ACharacterActivableActor::InteractionHint_Implementation() const
@@ -125,6 +139,39 @@ bool ACharacterActivableActor::IsAnimationPlaying_Implementation() const
 		return Animation->IsPlaying_Implementation();
 	}
 	return false;
+}
+
+void ACharacterActivableActor::Interact(AActor* OtherActor)
+{
+	//Execute only if the the animations is not playing
+	if (!IsAnimationPlaying_Implementation())
+	{
+		InteractedEvent.Broadcast();
+
+		switch (State)
+		{
+		case EActivableState::Activated:
+		{
+			Deactivated_Implementation();
+			if (AFinalProjectCharacter* Character = Cast<AFinalProjectCharacter>(OtherActor))
+			{
+				Character->InteractionHint.ExecuteIfBound(ActivationHint + " " + ActivableActorName, true);
+			}
+			break;
+		}
+		case EActivableState::Deactivated:
+		{
+			Activated_Implementation();
+			if (AFinalProjectCharacter* Character = Cast<AFinalProjectCharacter>(OtherActor))
+			{
+				Character->InteractionHint.ExecuteIfBound(DeactivationHint + " " + ActivableActorName, true);
+			}
+			break;
+		}
+		default:
+			break;
+		}
+	}
 }
 
 void ACharacterActivableActor::Activated_Implementation()

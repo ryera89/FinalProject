@@ -7,11 +7,13 @@
 
 void UHUDWidget::ShowGameMessage(const FString& Message,float DisplayTime)
 {	
-	bGameMessageVisibility = true;
+	GameMessageVisibility = ESlateVisibility::Visible;
 	GameMessage = Message;
 
-	UWorld* TheWorld = GetWorld();
-	/*if (TheWorld != nullptr)
+	GetWorld()->GetTimerManager().SetTimer(timer, this, &UHUDWidget::HideGameMessage, DisplayTime);
+	
+		/*UWorld* TheWorld = GetWorld();
+	if (TheWorld != nullptr)
 	{
 		AGameModeBase* GameMode = UGameplayStatics::GetGameMode(TheWorld);
 
@@ -23,6 +25,11 @@ void UHUDWidget::ShowGameMessage(const FString& Message,float DisplayTime)
 			MyGameMode->GetWorldTimerManager().SetTimer(timer, this, &UHUDWidget::HideGameMessage,DisplayTime);
 		}
 	}*/
+}
+
+void UHUDWidget::SetQuestHint(const FString& Quest)
+{
+	QuestHint = Quest;
 }
 
 void UHUDWidget::NativeOnInitialized()
@@ -56,7 +63,7 @@ void UHUDWidget::NativeOnInitialized()
 
 void UHUDWidget::HideGameMessage()
 {
-	bGameMessageVisibility = false;
+	GameMessageVisibility = ESlateVisibility::Hidden;
 }
 
 void UHUDWidget::UpdatePlayerHealthBar(float Health,float MaxHealth)

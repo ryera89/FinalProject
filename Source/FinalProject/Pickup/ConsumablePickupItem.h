@@ -7,12 +7,6 @@
 #include "../Interfaces/Pickable.h"
 #include "ConsumablePickupItem.generated.h"
 
-UENUM()
-enum class EConsumableItemType : uint8
-{
-	HealthPotion,
-	EnergyPotion,
-};
 
 UCLASS()
 class FINALPROJECT_API AConsumablePickupItem : public AActor, public IPickable
@@ -53,10 +47,10 @@ public:
 
 	FORCEINLINE FString InteractableObjectName_Implementation() const  override { return ItemName; }
 
-	DECLARE_DERIVED_EVENT(ACharacterActivableActor,IInteractable::FInteractedEvent,FInteractedEvent)
+	DECLARE_DERIVED_EVENT(AConsumablePickupItem,IInteractable::FInteractedEvent,FInteractedEvent)
 	FORCEINLINE virtual FInteractedEvent& OnInteracted() override { return InteractedEvent; }
 
-	FORCEINLINE EPickableItemType ItemType_Implementation() const override { return EPickableItemType::Consumable; }
+	FORCEINLINE EItemType ItemType_Implementation() const override { return EItemType::Consumable; }
 
 	UFUNCTION(BlueprintCallable, category = "ConsumableType")
 	FORCEINLINE EConsumableItemType GetConsumableType() const { return ConsumableType; }
